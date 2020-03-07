@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 811207952}
   - component: {fileID: 811207951}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -288,6 +288,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c24e57083be0b4a4c9b31cf92229d815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxVertices: 2048
+  NumSides: 10
+  BaseRadius: 1
+  RadiusFalloff: 0.75
+  MinimumRadius: 0.25
+  BranchAmount: 3
+  BranchRoundness: 1
+  SegmentLength: 0.1
+  Twisting: 8
+  BranchProbability: 0.1
 --- !u!23 &811207952
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -302,7 +312,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: b6c7d19797fe14928ab170c663339425, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
