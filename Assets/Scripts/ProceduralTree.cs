@@ -38,9 +38,11 @@ public class ProceduralTree : MonoBehaviour
     [Range(0f, 1f)]
     public float StumpChance = 0.1f;
 
-    public Color BarkColor;
+    public Color BarkColor = Palette.BARK_BROWN;
 
-    public Color WoodColor;
+    public Color WoodColor = Palette.WOOD_BROWN;
+
+    public Color[] FoliageColors = new Color[] { Palette.GREEN };
 
 	private void Awake() 
 	{

@@ -18,6 +18,12 @@ namespace Tree_Generator.Assets.Scripts
             this.mesh = mesh;
         }
 
+        protected void AddVertex(Vector3 pos, Color color)
+        {
+            vertices.Add(pos);
+            colors.Add(color);
+        }
+
         /// <summary>
         /// Adds a triangle to the list.
         /// </summary>

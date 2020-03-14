@@ -3,35 +3,46 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+using URandom = UnityEngine.Random;
+
 namespace Tree_Generator.Assets.Scripts
 {
     public class LeavesGenerator : MeshGenerator
     {
         const float MAX_SHIFT_MAGNITUDE = 0.4f;
 
-        private ProceduralTree tree;
+        private Color color;
         
-        public LeavesGenerator(Mesh mesh) : base(mesh) { }
+        public LeavesGenerator(ProceduralTree tree, Mesh mesh) : base(mesh) 
+        {
+            int numColors = tree.FoliageColors.Length;
+            if (numColors > 0)
+            {
+                int colorIndex = URandom.Range(0, numColors);
+                color = tree.FoliageColors[colorIndex];
+            }
+            else color = Palette.GREEN;
+        }
 
         private void GenerateIcosahedron(float radius)
         {    
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
     
-            vertices.Add(new Vector3(-1f,  t,  0f).normalized * radius);
-            vertices.Add(new Vector3( 1f,  t,  0f).normalized * radius);
-            vertices.Add(new Vector3(-1f, -t,  0f).normalized * radius);
-            vertices.Add(new Vector3( 1f, -t,  0f).normalized * radius);
+            AddVertex(new Vector3(-1f,  t,  0f).normalized * radius, color);
+            AddVertex(new Vector3( 1f,  t,  0f).normalized * radius, color);
+            AddVertex(new Vector3(-1f, -t,  0f).normalized * radius, color);
+            AddVertex(new Vector3( 1f, -t,  0f).normalized * radius, color);
     
-            vertices.Add(new Vector3( 0f, -1f,  t).normalized * radius);
-            vertices.Add(new Vector3( 0f,  1f,  t).normalized * radius);
-            vertices.Add(new Vector3( 0f, -1f, -t).normalized * radius);
-            vertices.Add(new Vector3( 0f,  1f, -t).normalized * radius);
+            AddVertex(new Vector3( 0f, -1f,  t).normalized * radius, color);
+            AddVertex(new Vector3( 0f,  1f,  t).normalized * radius, color);
+            AddVertex(new Vector3( 0f, -1f, -t).normalized * radius, color);
+            AddVertex(new Vector3( 0f,  1f, -t).normalized * radius, color);
     
-            vertices.Add(new Vector3( t,  0f, -1f).normalized * radius);
-            vertices.Add(new Vector3( t,  0f,  1f).normalized * radius);
-            vertices.Add(new Vector3(-t,  0f, -1f).normalized * radius);
-            vertices.Add(new Vector3(-t,  0f,  1f).normalized * radius);
+            AddVertex(new Vector3( t,  0f, -1f).normalized * radius, color);
+            AddVertex(new Vector3( t,  0f,  1f).normalized * radius, color);
+            AddVertex(new Vector3(-t,  0f, -1f).normalized * radius, color);
+            AddVertex(new Vector3(-t,  0f,  1f).normalized * radius, color);
     
             // 5 faces around point 0
             AddTriangle(0, 11, 5);

@@ -15,6 +15,7 @@ public class BranchGenerator : MeshGenerator
 
     const float BASE_THICKNESS_MULTIPLIER = 1.5f;
 
+    private readonly ProceduralTree tree;
     private readonly int expectedHeight;
     private readonly int numSides;
     private readonly float baseRadius;
@@ -25,6 +26,7 @@ public class BranchGenerator : MeshGenerator
 
     public BranchGenerator(ProceduralTree tree, Mesh mesh) : base(mesh)
     { 
+        this.tree = tree;
         expectedHeight = tree.Height;
         numSides = tree.Roundness;
         baseRadius = tree.Thickness;
@@ -35,12 +37,6 @@ public class BranchGenerator : MeshGenerator
 
         barkColor = tree.BarkColor;
         woodColor = tree.WoodColor;   
-    }
-
-    private void AddVertex(Vector3 pos, Color color)
-    {
-        vertices.Add(pos);
-        colors.Add(color);
     }
 
     private void AddRing(Vector3 centerPos, float radius, Quaternion rotation, Color color)
@@ -138,7 +134,7 @@ public class BranchGenerator : MeshGenerator
         //Determine whether this tree is a stump
         bool isStump = stumpChance > 0 && URandom.value <= stumpChance; 
 
-        int actualHeight = isStump ? URandom.Range(1, expectedHeight/2) : expectedHeight;
+        int actualHeight = isStump ? URandom.Range(2, expectedHeight/2) : expectedHeight;
         for (int i = 0; i < actualHeight; i++)
         {
             radius = Mathf.Lerp(baseRadius, 0, (float) i / expectedHeight);
@@ -159,8 +155,20 @@ public class BranchGenerator : MeshGenerator
         if (isStump) AddStumpTop(pos, radius, rotation);
         else 
         {
-            AddBranchCap(pos + rotation * Vector3.up, barkColor);
-            //TODO: generate leaves
+            var capPos = pos + rotation * Vector3.up;
+            AddBranchCap(capPos, barkColor);
+
+            //Add leaves to the branch
+            var leaves = new GameObject();
+            leaves.transform.parent = tree.gameObject.transform;
+            leaves.transform.localPosition = capPos;
+
+            var filter = leaves.AddComponent<MeshFilter>();
+            var generator = new LeavesGenerator(tree, filter.mesh);
+            generator.GenerateMesh();
+
+            var renderer = leaves.AddComponent<MeshRenderer>();
+            renderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
         }
 
         PersistMesh();
