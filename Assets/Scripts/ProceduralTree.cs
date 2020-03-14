@@ -5,12 +5,13 @@ using UnityEngine;
 public class ProceduralTree : MonoBehaviour 
 {
 	private MeshFilter meshFilter;
-	private BranchGenerator generator;
+    private MeshRenderer meshRenderer;
+	private IMeshGenerator generator;
 
     /// <summary>
     /// The amount of segments of the tree.
     /// </summary>
-    [Range(0, 20)]
+    [Range(5, 25)]
     public int Height = 10;
 
     /// <summary>
@@ -23,17 +24,31 @@ public class ProceduralTree : MonoBehaviour
     /// Radius at the base of the tree.
     /// </summary>
     [Range(0.25f, 4f)]
-    public float BaseRadius = 1f;
+    public float Thickness = 1f;
     
     /// <summary>
-    /// Radius at the base of the tree.
+    /// Low values make branches straighter.
     /// </summary>
     [Range(0f, 40f)]
     public float Twisting = 8;
 
+    /// <summary>
+    /// The chance a generated tree will be broken.
+    /// </summary>
+    [Range(0f, 1f)]
+    public float StumpChance = 0.1f;
+
+    public Color BarkColor;
+
+    public Color WoodColor;
+
 	private void Awake() 
 	{
 		meshFilter = GetComponent<MeshFilter>();
+		meshRenderer = GetComponent<MeshRenderer>();
+
+        meshRenderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
+
 		generator = new BranchGenerator(this, meshFilter.mesh);
 	}
 
