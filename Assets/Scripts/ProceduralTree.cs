@@ -6,7 +6,7 @@ public class ProceduralTree : MonoBehaviour
 {
 	private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-	private IMeshGenerator generator;
+	private MeshGenerator generator;
 
     /// <summary>
     /// The amount of segments of the tree.

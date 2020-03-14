@@ -5,39 +5,13 @@ using UnityEngine.Assertions;
 
 namespace Tree_Generator.Assets.Scripts
 {
-    public class LeavesGenerator : MonoBehaviour, IMeshGenerator
+    public class LeavesGenerator : MeshGenerator
     {
         const float MAX_SHIFT_MAGNITUDE = 0.4f;
 
         private ProceduralTree tree;
-        private Mesh mesh;
-
-        private List<Vector3> vertices;
-        private List<int> triangles;
-        private List<Color> colors;
-
-        public LeavesGenerator(Mesh mesh)
-        { 
-            this.mesh = mesh;
-
-            vertices = new List<Vector3>();
-            triangles = new List<int>();
-        }
-
-
-        /// <summary>
-        /// Adds a triangle to the list.
-        /// </summary>
-        private void AddTriangle(int a, int b, int c)
-        {
-            Assert.IsFalse(a < 0);
-            Assert.IsFalse(b < 0);
-            Assert.IsFalse(c < 0);
-
-            triangles.Add(a);
-            triangles.Add(b);
-            triangles.Add(c);
-        }
+        
+        public LeavesGenerator(Mesh mesh) : base(mesh) { }
 
         private void GenerateIcosahedron(float radius)
         {    
@@ -88,7 +62,7 @@ namespace Tree_Generator.Assets.Scripts
             AddTriangle(9, 8, 1);
         }
 
-        public void GenerateMesh()
+        public override void GenerateMesh()
         {
             GenerateIcosahedron(1f);
 
@@ -102,18 +76,6 @@ namespace Tree_Generator.Assets.Scripts
             }
 
             PersistMesh();
-        }
-
-        public void PersistMesh()
-        {
-            mesh.Clear();
-
-            mesh.vertices = vertices.ToArray();
-            mesh.triangles = triangles.ToArray();
-
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-            MeshUtility.Optimize(mesh);
         }
     }
 }

@@ -7,19 +7,13 @@ using UnityEngine.Assertions;
 
 using URandom = UnityEngine.Random;
 
-public class BranchGenerator : MonoBehaviour, IMeshGenerator
+public class BranchGenerator : MeshGenerator
 {
     //TODO: XML comments
     //TODO: refactoring
     //TODO: magic numbers to constants
 
     const float BASE_THICKNESS_MULTIPLIER = 1.5f;
-
-    private readonly Mesh mesh;
-
-    private readonly List<Vector3> vertices = new List<Vector3>();
-    private readonly List<int> triangles = new List<int>();
-    private readonly List<Color> colors = new List<Color>();
 
     private readonly int expectedHeight;
     private readonly int numSides;
@@ -29,10 +23,8 @@ public class BranchGenerator : MonoBehaviour, IMeshGenerator
     private readonly Color barkColor;
     private readonly Color woodColor;
 
-    public BranchGenerator(ProceduralTree tree, Mesh mesh)
+    public BranchGenerator(ProceduralTree tree, Mesh mesh) : base(mesh)
     { 
-        this.mesh = mesh;
-
         expectedHeight = tree.Height;
         numSides = tree.Roundness;
         baseRadius = tree.Thickness;
@@ -118,35 +110,6 @@ public class BranchGenerator : MonoBehaviour, IMeshGenerator
     }
 
     /// <summary>
-    /// Adds a triangle to the list.
-    /// </summary>
-    private void AddTriangle(int a, int b, int c)
-    {
-        Assert.IsFalse(a < 0);
-        Assert.IsFalse(b < 0);
-        Assert.IsFalse(c < 0);
-
-        triangles.Add(a);
-        triangles.Add(b);
-        triangles.Add(c);
-    }
-
-    private void AddRectangle(int a, int b, int c, int d)
-    {
-        Assert.IsFalse(a < 0);
-        Assert.IsFalse(b < 0);
-        Assert.IsFalse(c < 0);
-
-        triangles.Add(a);
-        triangles.Add(b);
-        triangles.Add(c);
-
-        triangles.Add(a);
-        triangles.Add(c);
-        triangles.Add(d);
-    }
-
-    /// <summary>
     /// Connects two last added rings with triangles.
     /// </summary>
     private void ConnectRings()
@@ -162,7 +125,7 @@ public class BranchGenerator : MonoBehaviour, IMeshGenerator
         }
     }
 
-    public void GenerateMesh()
+    public override void GenerateMesh()
     {
         float radius = baseRadius;
         var rotation = Quaternion.identity;
@@ -201,18 +164,5 @@ public class BranchGenerator : MonoBehaviour, IMeshGenerator
         }
 
         PersistMesh();
-    }
-
-    public void PersistMesh()
-    {
-        mesh.Clear();
-
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.colors = colors.ToArray();
-
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-        MeshUtility.Optimize(mesh);
     }
 }
