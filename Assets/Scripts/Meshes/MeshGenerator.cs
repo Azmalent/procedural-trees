@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 namespace Tree_Generator.Assets.Scripts
 {
-    public abstract class MeshGenerator : MonoBehaviour
+    public abstract class MeshGenerator
     {
         protected readonly Mesh mesh;
 
