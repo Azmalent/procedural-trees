@@ -58,5 +58,6 @@
         "Assets/Scenes": true,
         "Assets/Materials": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "python.pythonPath": "/usr/bin/python3.7"
 }

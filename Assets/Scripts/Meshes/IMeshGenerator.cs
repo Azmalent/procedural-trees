@@ -7,6 +7,6 @@ namespace Tree_Generator.Assets.Scripts
     public interface IMeshGenerator
     {
         void GenerateMesh();
-        void FinishMesh();
+        void PersistMesh();
     }
 }
