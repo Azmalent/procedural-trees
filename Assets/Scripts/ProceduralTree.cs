@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralTree : MonoBehaviour 
 {
     public enum TrunkType
