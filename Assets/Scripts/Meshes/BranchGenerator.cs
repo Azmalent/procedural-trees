@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Tree_Generator.Assets.Scripts;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -21,8 +18,10 @@ public class BranchGenerator : MeshGenerator
     private readonly float baseRadius;
     private readonly float twisting;
     private readonly float stumpChance;
+
     private readonly Color barkColor;
     private readonly Color woodColor;
+    private readonly FoliageType foliageType;
 
     public BranchGenerator(ProceduralTree tree, Mesh mesh) : base(mesh)
     { 
@@ -37,8 +36,16 @@ public class BranchGenerator : MeshGenerator
 
         barkColor = tree.BarkColor;
         woodColor = tree.WoodColor;   
+        foliageType = tree.FoliageStyle;
     }
 
+    /// <summary>
+    /// Adds a ring of vertices to the mesh.
+    /// </summary>
+    /// <param name="centerPos">Position of the center point.</param>
+    /// <param name="radius">Radius of the ring.</param>
+    /// <param name="rotation">Rotation of the ring.</param>
+    /// <param name="color">Color of the vertices.</param>
     private void AddRing(Vector3 centerPos, float radius, Quaternion rotation, Color color)
     {
         double angle = 2*Math.PI / numSides; 
@@ -67,44 +74,6 @@ public class BranchGenerator : MeshGenerator
         AddTriangle(vertices.Count-2, vertices.Count-1, startIndex);
     }
 
-    private void AddStumpTop(Vector3 bottomPos, float radius, Quaternion rotation)
-    {
-        int outerStartIndex = vertices.Count - numSides;
-        Assert.IsTrue(outerStartIndex >= 0);
-
-        //Fill the top of the stump
-        AddRing(bottomPos, radius * 0.8f, rotation, woodColor);
-        int first = vertices.Count - numSides;
-        for (int i = first; i < vertices.Count-2; i++) AddTriangle(i+2, i+1, first);
-
-        var direction = rotation * Vector3.up;
-        int innerStartIndex = vertices.Count - numSides;
-
-        for (int i = 0; i < numSides; i++)
-        {
-            int cur = outerStartIndex + i;
-            int next = (i < numSides-1) ? cur+1 : outerStartIndex;
-
-            float height = URandom.Range(0.05f, 0.3f);
-
-            int lastIndex = vertices.Count;
-
-            AddVertex(vertices[cur] + height * direction, barkColor);
-            AddVertex(vertices[next] + height * direction, barkColor);
-            AddVertex(vertices[cur + numSides] + height * direction, barkColor);
-            AddVertex(vertices[next + numSides] + height * direction, barkColor);
-
-            //Top
-            AddRectangle(lastIndex+3, lastIndex+1, lastIndex, lastIndex+2);
-            
-            //Connect to inner ring
-            AddRectangle(lastIndex+3, lastIndex+2, cur + numSides, next + numSides);
-
-            //Connect to outer ring
-            AddRectangle(lastIndex, lastIndex+1, next, cur);
-        }
-    }
-
     /// <summary>
     /// Connects two last added rings with triangles.
     /// </summary>
@@ -121,6 +90,95 @@ public class BranchGenerator : MeshGenerator
         }
     }
 
+    private void AddSplinter(int outerStartIndex, Vector3 direction, int i)
+    {
+        //Calculate indices of bottom vertices
+        int currentOuter = outerStartIndex + i;
+        int nextOuter = (i < numSides-1) ? currentOuter+1 : outerStartIndex;
+        int currentInner = currentOuter + numSides;
+        int nextInner = nextOuter + numSides;
+
+        //Randomize splinter height
+        float height = URandom.Range(0.05f, 0.3f);
+        Vector3 topOffset = height * direction;
+
+        //Create top vertices
+        int currentOuterTop = AddVertex(vertices[currentOuter] + topOffset, barkColor);
+        int nextOuterTop    = AddVertex(vertices[nextOuter]    + topOffset, barkColor);        
+        int currentInnerTop = AddVertex(vertices[currentInner] + topOffset, barkColor);
+        int nextInnerTop    = AddVertex(vertices[nextInner]    + topOffset, barkColor);
+        
+        //Top part
+        AddRectangle(currentInnerTop, nextInnerTop, nextOuterTop, currentOuterTop);
+        
+        //Connect to inner and outer rings
+        AddRectangle(nextInnerTop, currentInnerTop, currentInner, nextInner);
+        AddRectangle(currentOuterTop, nextOuterTop, nextOuter, currentOuter);
+
+        //Sides
+        AddRectangle(currentInnerTop, currentOuterTop, currentOuter, currentInner);
+        AddRectangle(nextOuterTop, nextInnerTop, nextInner, nextOuter);
+    }
+
+    /// <summary>
+    /// Adds the top part of the stump to the mesh.
+    /// </summary>
+    /// <param name="topPos">Position of the top circle</param>
+    /// <param name="radius">Radius of the top circle</param>
+    /// <param name="rotation">Rotation of the top circle</param>
+    private void AddStumpTop(Vector3 topPos, float radius, Quaternion rotation)
+    {
+        int outerStartIndex = vertices.Count - numSides;
+        AssertHelper.NotNegative(outerStartIndex);
+
+        //Add the inner ring
+        AddRing(topPos, radius * 0.8f, rotation, barkColor);
+
+        var direction = rotation * Vector3.up;
+        int innerStartIndex = vertices.Count - numSides;
+
+        for (int i = 0; i < numSides; i++) AddSplinter(outerStartIndex, direction, i);
+
+        //Fill the top of the stump
+        AddRing(topPos, radius * 0.8f, rotation, woodColor);
+        int first = vertices.Count - numSides;
+        for (int i = first; i < vertices.Count-2; i++) AddTriangle(i+2, i+1, first);
+    }
+
+    /// <summary>
+    /// Adds foliage to the end of the branch as a new GameObject.
+    /// </summary>
+    /// <param name="rotation">Rotation of the foliage</param>
+    /// <param name="pos">Position of the foliage</param>
+    private void AddFoliage(Quaternion rotation, Vector3 pos)
+    {
+        if (foliageType == FoliageType.None) return;
+        var leaves = new GameObject();
+        leaves.transform.parent = tree.gameObject.transform;
+        leaves.transform.localPosition = pos;
+
+        var filter = leaves.AddComponent<MeshFilter>();
+        var renderer = leaves.AddComponent<MeshRenderer>();
+        renderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
+
+        FoliageGenerator generator;
+        switch (foliageType)
+        {
+            case FoliageType.Round:
+                generator = new RoundLeavesGenerator(tree, filter.mesh);
+                break;
+
+            case FoliageType.Flat:
+                generator = new FlatLeavesGenerator(tree, filter.mesh);
+                break;
+
+            default: 
+                throw new ArgumentException("Unsupported foliage type");
+        }
+
+        generator.GenerateMesh();
+    }
+
     public override void GenerateMesh()
     {
         float radius = baseRadius;
@@ -134,7 +192,9 @@ public class BranchGenerator : MeshGenerator
         //Determine whether this tree is a stump
         bool isStump = stumpChance > 0 && URandom.value <= stumpChance; 
 
+        //Calculate actual height, which is lower than expected in case of a stump
         int actualHeight = isStump ? URandom.Range(2, expectedHeight/2) : expectedHeight;
+        
         for (int i = 0; i < actualHeight; i++)
         {
             radius = Mathf.Lerp(baseRadius, 0, (float) i / expectedHeight);
@@ -157,20 +217,11 @@ public class BranchGenerator : MeshGenerator
         {
             var capPos = pos + rotation * Vector3.up;
             AddBranchCap(capPos, barkColor);
-
-            //Add leaves to the branch
-            var leaves = new GameObject();
-            leaves.transform.parent = tree.gameObject.transform;
-            leaves.transform.localPosition = capPos;
-
-            var filter = leaves.AddComponent<MeshFilter>();
-            var generator = new LeavesGenerator(tree, filter.mesh);
-            generator.GenerateMesh();
-
-            var renderer = leaves.AddComponent<MeshRenderer>();
-            renderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
+            AddFoliage(rotation, capPos);
         }
 
         PersistMesh();
     }
+
+   
 }

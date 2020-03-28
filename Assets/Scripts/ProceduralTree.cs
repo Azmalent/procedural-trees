@@ -1,9 +1,12 @@
-﻿using Tree_Generator.Assets.Scripts;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ProceduralTree : MonoBehaviour 
 {
+    public enum TrunkType
+    {
+        Smooth, Notched
+    }
+
 	private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 	private MeshGenerator generator;
@@ -38,17 +41,21 @@ public class ProceduralTree : MonoBehaviour
     [Range(0f, 1f)]
     public float StumpChance = 0.1f;
 
+    [Range(1f, 10f)]
+    public float FoliageSize = 3f;
+
     public Color BarkColor = Palette.BARK_BROWN;
 
     public Color WoodColor = Palette.WOOD_BROWN;
 
     public Color[] FoliageColors = new Color[] { Palette.GREEN };
 
+    public FoliageType FoliageStyle = FoliageType.Round;
+
 	private void Awake() 
 	{
 		meshFilter = GetComponent<MeshFilter>();
 		meshRenderer = GetComponent<MeshRenderer>();
-
         meshRenderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
 
 		generator = new BranchGenerator(this, meshFilter.mesh);
