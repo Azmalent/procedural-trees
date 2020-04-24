@@ -1,40 +1,49 @@
 ﻿using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
-
-using URandom = UnityEngine.Random;
 
 public class RoundLeavesGenerator : FoliageGenerator
 {
-    const float MAX_DISPLACEMENT_MAGNITUDE = 0.4f;
+    //Golden ratio
+    const float PHI = 1.61803399f;
 
-    private float radius;
-    
-    public RoundLeavesGenerator(ProceduralTree tree, Mesh mesh) : base(tree, mesh) 
+    private float width;
+    private float height;
+    private Quaternion rotation;
+
+    public RoundLeavesGenerator(ProceduralTree tree, Mesh mesh, Quaternion rotation) : base(tree, mesh)
     {
-        radius = tree.FoliageSize;
+        width = tree.FoliageWidth;
+        height = tree.FoliageHeight;
+
+        this.rotation = rotation;
     }
 
-    private void GenerateIcosahedron(float radius)
-    {    
-        // create 12 vertices of a icosahedron
-        float t = (1f + Mathf.Sqrt(5f)) / 2f;
+    /// <summary>
+    /// Generates a basic icosahedron.
+    /// </summary>
+    /// <param name="rotation">Icosahedron's rotation</param>
+    /// <param name="width">Icosahedron's width</param>
+    /// <param name="height">Icosahedron's height</param>
+    private void GenerateIcosahedron(Quaternion rotation, float width, float height)
+    {
+        var vectors = new Vector3[] {
+            new Vector3(-1f, PHI, 0f),
+            new Vector3(1f, PHI, 0f),
+            new Vector3(-1f, -PHI, 0f),
+            new Vector3(1f, -PHI, 0f),
 
-        AddVertex(new Vector3(-1f,  t,  0f).normalized * radius, color);
-        AddVertex(new Vector3( 1f,  t,  0f).normalized * radius, color);
-        AddVertex(new Vector3(-1f, -t,  0f).normalized * radius, color);
-        AddVertex(new Vector3( 1f, -t,  0f).normalized * radius, color);
+            new Vector3(0f, -1f, PHI),
+            new Vector3(0f, 1f, PHI),
+            new Vector3(0f, -1f, -PHI),
+            new Vector3(0f, 1f, -PHI),
 
-        AddVertex(new Vector3( 0f, -1f,  t).normalized * radius, color);
-        AddVertex(new Vector3( 0f,  1f,  t).normalized * radius, color);
-        AddVertex(new Vector3( 0f, -1f, -t).normalized * radius, color);
-        AddVertex(new Vector3( 0f,  1f, -t).normalized * radius, color);
+            new Vector3(PHI, 0f, -1f),
+            new Vector3(PHI, 0f, 1f),
+            new Vector3(-PHI, 0f, -1f),
+            new Vector3(-PHI, 0f, 1f)
+        };
 
-        AddVertex(new Vector3( t,  0f, -1f).normalized * radius, color);
-        AddVertex(new Vector3( t,  0f,  1f).normalized * radius, color);
-        AddVertex(new Vector3(-t,  0f, -1f).normalized * radius, color);
-        AddVertex(new Vector3(-t,  0f,  1f).normalized * radius, color);
+        foreach (Vector3 v in vectors) AddVertex(rotation * v.normalized, color);
 
         // 5 faces around point 0
         AddTriangle(0, 11, 5);
@@ -63,23 +72,112 @@ public class RoundLeavesGenerator : FoliageGenerator
         AddTriangle(6, 2, 10);
         AddTriangle(8, 6, 7);
         AddTriangle(9, 8, 1);
+
+        Subdivide();
+        AdjustRadius();
     }
 
-    private void DisplaceVertices()
+    /// <summary>
+    /// Finds the vertex in the middle of a specified segment. 
+    /// If this vertex does not exist, it is added. 
+    /// </summary>
+    /// <param name="aIndex">Index of first vertex</param>
+    /// <param name="bIndex">Index of second vertex</param>
+    /// <returns>Index of the vertex between vertices A and B</returns>
+    private int FindOrCreateMiddle(int aIndex, int bIndex)
     {
-        for(int i = 0; i < vertices.Count; i++)
+        Vector3 a = vertices[aIndex];
+        Vector3 b = vertices[bIndex];
+        Vector3 middle = Vector3.Lerp(a, b, 0.5f).normalized;
+
+        int index = vertices.IndexOf(middle);
+        if (index > -1) return index;
+
+        return AddVertex(middle, color);
+    }
+
+    /// <summary>
+    /// Subdivides every triangle into four new ones.
+    /// </summary>
+    private void Subdivide()
+    {
+        int n = triangles.Count;
+        for (int i = 0; i < n; i += 3)
+        {
+            int a = FindOrCreateMiddle(triangles[i], triangles[i + 1]);
+            int b = FindOrCreateMiddle(triangles[i + 1], triangles[i + 2]);
+            int c = FindOrCreateMiddle(triangles[i + 2], triangles[i]);
+
+            AddTriangle(c, triangles[i], a);
+            AddTriangle(a, triangles[i + 1], b);
+            AddTriangle(b, triangles[i + 2], c);
+            AddTriangle(a, b, c);
+        }
+
+        triangles.RemoveRange(0, n);
+    }
+
+    /// <summary>
+    /// Adjusts the radius of the vertices of the icosahedron.
+    /// </summary>
+    private void AdjustRadius()
+    {
+        for (int i = 0; i < vertices.Count; i++)
         {
             Vector3 v = vertices[i];
-            float magnitude = Random.value * MAX_DISPLACEMENT_MAGNITUDE;
+            float radius = Mathf.Lerp(width, height, Mathf.Sin(v.y / v.magnitude));
+            vertices[i] = v * radius;
+        }
+    }
+
+    /// <summary>
+    /// Returns indices of every vertex connected to k.
+    /// </summary>
+    /// <param name="k">Index of the vertex</param>
+    /// <returns>IEnumerable of k's neighbors</returns>
+    private IEnumerable<int> FindNeighbors(int k)
+    {
+        for (int i = 0; i < triangles.Count; i += 3)
+        {
+            if (triangles[i] != k &&
+                triangles[i + 1] != k &&
+                triangles[i + 2] != k) continue;
+
+            for (int j = i; j < i + 3; j++)
+            {
+                int other = triangles[j];
+                if (other != k) yield return other;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Displaces vertices randomly while preserving the shape of the figure.
+    /// </summary>
+    private void DisplaceVertices()
+    {
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            float minDistance = float.MaxValue;
+
+            Vector3 v = vertices[i];
+            foreach (int j in FindNeighbors(i))
+            {
+                Vector3 neighbor = vertices[j];
+                float distance = Vector3.Distance(v, neighbor);
+                if (distance < minDistance) minDistance = distance;
+            }
+
+            float magnitude = Random.value * (minDistance / 3);
             Vector3 displacement = Random.insideUnitSphere * magnitude;
-            
+
             vertices[i] = v + displacement;
         }
     }
 
     public override void GenerateMesh()
     {
-        GenerateIcosahedron(radius);
+        GenerateIcosahedron(rotation * Random.rotation, width, height);
         DisplaceVertices();
         PersistMesh();
     }

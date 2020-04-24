@@ -4,9 +4,11 @@ using UnityEngine.Assertions;
 
 public class FlatLeavesGenerator : FoliageGenerator
 {
-    public FlatLeavesGenerator(ProceduralTree tree, Mesh mesh) : base(tree, mesh)
-    {
+    private Quaternion rotation;
 
+    public FlatLeavesGenerator(ProceduralTree tree, Mesh mesh, Quaternion rotation) : base(tree, mesh)
+    {
+        this.rotation = rotation;
     }
 
     private void AddTwoSidedTriangle(int a, int b, int c)
@@ -45,24 +47,23 @@ public class FlatLeavesGenerator : FoliageGenerator
         triangles.Add(a);
     }
 
-
     private void GenerateLeaf(Quaternion rotation)
     {
         float x = 2.5f;
         float y = -0.5f;
         float z = 0.5f;
+
         int startIndex = vertices.Count;
-        Debug.Log(rotation);
         AddVertex(Vector3.zero, color);
         AddVertex(rotation * new Vector3(x, y, -z), color);
         AddVertex(rotation * new Vector3(x, y, z), color);
-        AddVertex(rotation * new Vector3(2*x, 2.5f*y, z), color);
-        AddVertex(rotation * new Vector3(2*x, 2.5f*y, -z), color);
-        AddVertex(rotation * new Vector3(3*x, 6f*y, 0), color);
+        AddVertex(rotation * new Vector3(2 * x, 2.5f * y, z), color);
+        AddVertex(rotation * new Vector3(2 * x, 2.5f * y, -z), color);
+        AddVertex(rotation * new Vector3(3 * x, 6f * y, 0), color);
 
-        AddTwoSidedTriangle(startIndex, startIndex+1, startIndex+2);
-        AddTwoSidedRectangle(startIndex+1, startIndex+2, startIndex+3, startIndex+4);
-        AddTwoSidedTriangle(startIndex+3, startIndex+4, startIndex+5);
+        AddTwoSidedTriangle(startIndex, startIndex + 1, startIndex + 2);
+        AddTwoSidedRectangle(startIndex + 1, startIndex + 2, startIndex + 3, startIndex + 4);
+        AddTwoSidedTriangle(startIndex + 3, startIndex + 4, startIndex + 5);
     }
 
     public override void GenerateMesh()

@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class ProceduralTree : MonoBehaviour 
+public class ProceduralTree : MonoBehaviour
 {
-    public enum TrunkType
-    {
-        Smooth, Notched
-    }
+    public const float MIN_FOLIAGE_SIZE = 1f;
+    public const float MAX_FOLIAGE_SIZE = 10f;
 
-	private MeshFilter meshFilter;
+    private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-	private MeshGenerator generator;
+    private MeshGenerator generator;
 
     /// <summary>
     /// The amount of segments of the tree.
@@ -29,7 +27,7 @@ public class ProceduralTree : MonoBehaviour
     /// </summary>
     [Range(0.25f, 4f)]
     public float Thickness = 1f;
-    
+
     /// <summary>
     /// Low values make branches straighter.
     /// </summary>
@@ -42,33 +40,39 @@ public class ProceduralTree : MonoBehaviour
     [Range(0f, 1f)]
     public float StumpChance = 0.1f;
 
-    [Range(1f, 10f)]
-    public float FoliageSize = 3f;
-
+    /// <summary>
+    /// The colot of the bark.
+    /// </summary>
     public Color BarkColor = Palette.BARK_BROWN;
 
+    /// <summary>
+    /// The color of the inside of the tree, visible when a stump is generated.
+    /// </summary>
     public Color WoodColor = Palette.WOOD_BROWN;
 
+    [HideInInspector]
+    public ProceduralFoliageStyle FoliageStyle = ProceduralFoliageStyle.Round;
+
+    [HideInInspector]
     public Color[] FoliageColors = new Color[] { Palette.GREEN };
 
-    public FoliageType FoliageStyle = FoliageType.Round;
+    [HideInInspector, Range(MIN_FOLIAGE_SIZE, MAX_FOLIAGE_SIZE)]
+    public float FoliageHeight = 3f;
 
-	private void Awake() 
-	{
-		meshFilter = GetComponent<MeshFilter>();
-		meshRenderer = GetComponent<MeshRenderer>();
+    [HideInInspector, Range(MIN_FOLIAGE_SIZE, MAX_FOLIAGE_SIZE)]
+    public float FoliageWidth = 3f;
+
+    private void Awake()
+    {
+        meshFilter = GetComponent<MeshFilter>();
+        meshRenderer = GetComponent<MeshRenderer>();
         meshRenderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
 
-		generator = new BranchGenerator(this, meshFilter.mesh);
-	}
+        generator = new BranchGenerator(this, meshFilter.mesh);
+    }
 
-	void Start () 
-	{
+    void Start()
+    {
         generator.GenerateMesh();
-	}
-
-	void Update () 
-	{
-		
-	}
+    }
 }
