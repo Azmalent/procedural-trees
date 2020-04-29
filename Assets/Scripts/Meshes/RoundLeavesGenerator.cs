@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Generates round foliage.
+/// </summary>
 public class RoundLeavesGenerator : FoliageGenerator
 {
     //Golden ratio
-    const float PHI = 1.61803399f;
+    private const float PHI = 1.61803399f;
 
     private float width;
     private float height;

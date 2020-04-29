@@ -13,7 +13,7 @@ public class ProceduralTree : MonoBehaviour
     /// <summary>
     /// The amount of segments of the tree.
     /// </summary>
-    [Range(5, 25)]
+    [Header("Trunk Options"), Range(5, 25)]
     public int Height = 10;
 
     /// <summary>
@@ -50,7 +50,7 @@ public class ProceduralTree : MonoBehaviour
     /// </summary>
     public Color WoodColor = Palette.WOOD_BROWN;
 
-    [HideInInspector]
+    [Header("Foliage Options")]
     public ProceduralFoliageStyle FoliageStyle = ProceduralFoliageStyle.Round;
 
     [HideInInspector]

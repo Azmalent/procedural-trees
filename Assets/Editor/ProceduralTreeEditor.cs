@@ -13,31 +13,45 @@ public class ProceduralTreeEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        EditorGUILayout.LabelField("Trunk Settings", EditorStyles.boldLabel);
         DrawDefaultInspector();
-
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Foliage Parameters", EditorStyles.boldLabel);
         DrawFoliageOptions();
+    }
+
+    private bool colorsExpanded = true;
+    private void DrawFoliageColorList()
+    {
+        var colors = serializedObject.FindProperty("FoliageColors");
+        colorsExpanded = EditorGUILayout.Foldout(colorsExpanded, colors.displayName);
+
+        if (colorsExpanded)
+        {
+            EditorGUI.indentLevel++;
+
+            EditorGUILayout.PropertyField(colors.FindPropertyRelative("Array.size"));
+            for (int i = 0; i < colors.arraySize; i++)
+            {
+                EditorGUILayout.PropertyField(colors.GetArrayElementAtIndex(i));
+            }
+
+            EditorGUI.indentLevel--;
+        }
     }
 
     private void DrawFoliageOptions()
     {
-        tree.FoliageStyle = (ProceduralFoliageStyle)
-            EditorGUILayout.EnumPopup("Style", tree.FoliageStyle);
+        serializedObject.Update();
 
         if (tree.FoliageStyle == ProceduralFoliageStyle.None) return;
 
-        //TODO: display color array somehow
-
-        tree.FoliageWidth = EditorGUILayout.Slider("Width", tree.FoliageWidth,
-            ProceduralTree.MIN_FOLIAGE_SIZE, ProceduralTree.MAX_FOLIAGE_SIZE);
-        tree.FoliageHeight = EditorGUILayout.Slider("Height", tree.FoliageHeight,
-            ProceduralTree.MIN_FOLIAGE_SIZE, ProceduralTree.MAX_FOLIAGE_SIZE);
+        DrawFoliageColorList();
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageWidth"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageHeight"));
 
         switch (tree.FoliageStyle)
         {
             //TODO: style-specific settings
         }
+
+        serializedObject.ApplyModifiedProperties();
     }
 }
