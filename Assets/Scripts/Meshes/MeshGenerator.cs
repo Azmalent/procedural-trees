@@ -1,19 +1,32 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public abstract class MeshGenerator
 {
     protected readonly Mesh mesh;
 
-    protected readonly List<Vector3> vertices = new List<Vector3>();
-    protected readonly List<int> triangles = new List<int>();
-    protected readonly List<Color> colors = new List<Color>();
+    protected List<Vector3> vertices;
+    protected List<int> triangles;
+    protected List<Color> colors;
 
-    protected MeshGenerator(Mesh mesh)
+    protected MeshGenerator(Mesh mesh, MeshGenerator parent = null)
     {
         this.mesh = mesh;
+
+        if (parent == null)
+        {
+            vertices = new List<Vector3>();
+            triangles = new List<int>();
+            colors = new List<Color>();
+        }
+        else
+        {
+            vertices = parent.vertices;
+            triangles = parent.triangles;
+            colors = parent.colors;
+        }
     }
 
     protected int AddVertex(Vector3 pos, Color color)

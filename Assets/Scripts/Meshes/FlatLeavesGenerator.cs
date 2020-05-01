@@ -4,11 +4,8 @@ using UnityEngine.Assertions;
 
 public class FlatLeavesGenerator : FoliageGenerator
 {
-    private Quaternion rotation;
-
-    public FlatLeavesGenerator(ProceduralTree tree, Mesh mesh, Quaternion rotation) : base(tree, mesh)
+    public FlatLeavesGenerator(ProceduralTree tree, Mesh mesh) : base(tree, mesh)
     {
-        this.rotation = rotation;
     }
 
     private void AddTwoSidedTriangle(int a, int b, int c)

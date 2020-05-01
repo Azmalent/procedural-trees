@@ -113,6 +113,97 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &334390796
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -0.025725365
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.5765312
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -1.0778384
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1036407593426962, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+      propertyPath: m_Name
+      value: Tree
+      objectReference: {fileID: 0}
+    - target: {fileID: 23595404668926644, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b6c7d19797fe14928ab170c663339425, type: 2}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: FoliageWidth
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: FoliageHeight
+      value: 7.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: FoliageWidthVariance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: Scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: StumpChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: FoliageStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: Height
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 2}
+      propertyPath: Thickness
+      value: 2.59
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 0e2b98022346a47d781a51958196ae5e, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &341313644
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,98 +349,4 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &811207950
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 811207954}
-  - component: {fileID: 811207953}
-  - component: {fileID: 811207952}
-  - component: {fileID: 811207951}
-  m_Layer: 0
-  m_Name: Tree
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &811207951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 811207950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c24e57083be0b4a4c9b31cf92229d815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Height: 10
-  Roundness: 6
-  Thickness: 1.33
-  Twisting: 8
-  StumpChance: 0.148
-  FoliageSize: 3
-  BarkColor: {r: 0.5441177, g: 0.42066243, b: 0.22004761, a: 1}
-  WoodColor: {r: 0.75, g: 0.6, b: 0.42, a: 1}
-  FoliageColors:
-  - {r: 0, g: 0.5, b: 0, a: 1}
-  FoliageStyle: 1
---- !u!23 &811207952
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 811207950}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: b6c7d19797fe14928ab170c663339425, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &811207953
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 811207950}
-  m_Mesh: {fileID: 0}
---- !u!4 &811207954
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 811207950}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.025725365, y: 1.5765312, z: -1.0778384}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

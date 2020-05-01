@@ -9,16 +9,8 @@ public class RoundLeavesGenerator : FoliageGenerator
     //Golden ratio
     private const float PHI = 1.61803399f;
 
-    private float width;
-    private float height;
-    private Quaternion rotation;
-
-    public RoundLeavesGenerator(ProceduralTree tree, Mesh mesh, Quaternion rotation) : base(tree, mesh)
+    public RoundLeavesGenerator(ProceduralTree tree, Mesh mesh) : base(tree, mesh)
     {
-        width = tree.FoliageWidth;
-        height = tree.FoliageHeight;
-
-        this.rotation = rotation;
     }
 
     /// <summary>
@@ -27,7 +19,7 @@ public class RoundLeavesGenerator : FoliageGenerator
     /// <param name="rotation">Icosahedron's rotation</param>
     /// <param name="width">Icosahedron's width</param>
     /// <param name="height">Icosahedron's height</param>
-    private void GenerateIcosahedron(Quaternion rotation, float width, float height)
+    private void GenerateIcosahedron(float width, float height)
     {
         var vectors = new Vector3[] {
             new Vector3(-1f, PHI, 0f),
@@ -46,6 +38,7 @@ public class RoundLeavesGenerator : FoliageGenerator
             new Vector3(-PHI, 0f, 1f)
         };
 
+        var rotation = Random.rotation;
         foreach (Vector3 v in vectors) AddVertex(rotation * v.normalized, color);
 
         // 5 faces around point 0
@@ -180,7 +173,7 @@ public class RoundLeavesGenerator : FoliageGenerator
 
     public override void GenerateMesh()
     {
-        GenerateIcosahedron(rotation * Random.rotation, width, height);
+        GenerateIcosahedron(width, height);
         DisplaceVertices();
         PersistMesh();
     }

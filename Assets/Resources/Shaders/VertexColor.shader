@@ -1,4 +1,4 @@
-﻿Shader "Custom/StandardFlatShader"
+﻿Shader "Custom/VertexColor"
 {
 	Properties
 	{

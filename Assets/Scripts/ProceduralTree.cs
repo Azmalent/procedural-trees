@@ -5,15 +5,30 @@ public class ProceduralTree : MonoBehaviour
 {
     public const float MIN_FOLIAGE_SIZE = 1f;
     public const float MAX_FOLIAGE_SIZE = 10f;
+    public const float MAX_FOLIAGE_VARIANCE = 5f;
 
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
     private MeshGenerator generator;
 
+    [Range(0.1f, 10)]
+    public float Scale;
+
+    public float Units(float n)
+    {
+        return n * Scale;
+    }
+
+    [Header("Trunk Options")]
+    /// <summary>
+    /// The material assigned to the trunk.
+    /// </summary>
+    public Material TrunkMaterial;
+
     /// <summary>
     /// The amount of segments of the tree.
     /// </summary>
-    [Header("Trunk Options"), Range(5, 25)]
+    [Range(5, 25)]
     public int Height = 10;
 
     /// <summary>
@@ -51,6 +66,8 @@ public class ProceduralTree : MonoBehaviour
     public Color WoodColor = Palette.WOOD_BROWN;
 
     [Header("Foliage Options")]
+    public Material FoliageMaterial;
+
     public ProceduralFoliageStyle FoliageStyle = ProceduralFoliageStyle.Round;
 
     [HideInInspector]
@@ -59,16 +76,22 @@ public class ProceduralTree : MonoBehaviour
     [HideInInspector, Range(MIN_FOLIAGE_SIZE, MAX_FOLIAGE_SIZE)]
     public float FoliageHeight = 3f;
 
+    [HideInInspector, Range(0, MAX_FOLIAGE_VARIANCE)]
+    public float FoliageHeightVariance = 1f;
+
     [HideInInspector, Range(MIN_FOLIAGE_SIZE, MAX_FOLIAGE_SIZE)]
     public float FoliageWidth = 3f;
+
+    [HideInInspector, Range(0, MAX_FOLIAGE_VARIANCE)]
+    public float FoliageWidthVariance = 3f;
 
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material = new Material(Resources.Load<Shader>("Shaders/VertexColor"));
+        meshRenderer.material = TrunkMaterial;
 
-        generator = new BranchGenerator(this, meshFilter.mesh);
+        generator = new TrunkGenerator(this, meshFilter.mesh);
     }
 
     void Start()

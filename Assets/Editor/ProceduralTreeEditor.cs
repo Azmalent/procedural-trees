@@ -21,12 +21,13 @@ public class ProceduralTreeEditor : Editor
     private void DrawFoliageColorList()
     {
         var colors = serializedObject.FindProperty("FoliageColors");
-        colorsExpanded = EditorGUILayout.Foldout(colorsExpanded, colors.displayName);
+        colorsExpanded = EditorGUILayout.Foldout(colorsExpanded, "Possible Colors");
 
         if (colorsExpanded)
         {
             EditorGUI.indentLevel++;
 
+            //TODO: use a slider
             EditorGUILayout.PropertyField(colors.FindPropertyRelative("Array.size"));
             for (int i = 0; i < colors.arraySize; i++)
             {
@@ -44,8 +45,12 @@ public class ProceduralTreeEditor : Editor
         if (tree.FoliageStyle == ProceduralFoliageStyle.None) return;
 
         DrawFoliageColorList();
+        //TODO: better editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageWidth"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageWidthVariance"));
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageHeight"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("FoliageHeightVariance"));
 
         switch (tree.FoliageStyle)
         {

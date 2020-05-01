@@ -4,7 +4,11 @@ using URandom = UnityEngine.Random;
 
 public abstract class FoliageGenerator : MeshGenerator
 {
+    const float MIN_SIZE = 0.5f;
+
     protected Color color;
+    protected float width;
+    protected float height;
 
     public FoliageGenerator(ProceduralTree tree, Mesh mesh) : base(mesh)
     {
@@ -19,5 +23,11 @@ public abstract class FoliageGenerator : MeshGenerator
             color = colors[colorIndex];
         }
         else color = Palette.GREEN;
+
+        width = tree.FoliageWidth + Random.Range(-1, 1) * tree.FoliageWidthVariance;
+        width = Mathf.Max(MIN_SIZE, width) * tree.Scale;
+
+        height = tree.FoliageHeight + Random.Range(-1, 1) * tree.FoliageHeightVariance;
+        height = Mathf.Max(MIN_SIZE, height) * tree.Scale;
     }
 }
