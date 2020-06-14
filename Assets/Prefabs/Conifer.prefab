@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5149766393277966437
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1036407593426962, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_Name
+      value: Conifer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 135
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 234
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4809401454480456, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 23595404668926644, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: TrunkMaterials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageMaterials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageWidth
+      value: 6.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageHeight
+      value: 7.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageWidthVariance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: Scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: StumpChance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageStyle
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: Height
+      value: 23.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: Thickness
+      value: 1.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[1].g
+      value: 0.5660378
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[1].a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[2].g
+      value: 0.46686032
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[2].a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[1].r
+      value: 0.19223922
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[2].r
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: BarkColor.r
+      value: 0.509434
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: BarkColor.g
+      value: 0.41804445
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: BarkColor.b
+      value: 0.1537914
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: Twisting
+      value: 26.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageColors.Array.data[1].b
+      value: 0.19223922
+      objectReference: {fileID: 0}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: TrunkMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 70973d859be5c4c838f3c73c950e97d1, type: 2}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: FoliageMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 70973d859be5c4c838f3c73c950e97d1, type: 2}
+    - target: {fileID: 114542508671338790, guid: 0e2b98022346a47d781a51958196ae5e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0e2b98022346a47d781a51958196ae5e, type: 3}

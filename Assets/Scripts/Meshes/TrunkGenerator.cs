@@ -8,7 +8,8 @@ public class TrunkGenerator : TreeGenerator
     const float BASE_THICKNESS_MULTIPLIER = 1.5f;
     const float STUMP_INNER_RING_RADIUS = 0.8f;
 
-    private readonly int expectedHeight;
+    private readonly float height;
+    private readonly int expectedNumSegments;
     private readonly float baseRadius;
     private readonly float stumpChance;
 
@@ -18,8 +19,11 @@ public class TrunkGenerator : TreeGenerator
 
     public TrunkGenerator(ProceduralTree tree, Mesh mesh) : base(tree, mesh)
     {
-        expectedHeight = tree.Height;
-        baseRadius = tree.Thickness * tree.Scale;
+        numSides = tree.NumSides;
+
+        height = tree.Height;
+        expectedNumSegments = tree.NumSegments;
+        baseRadius = tree.Thickness;
         stumpChance = tree.StumpChance;
         woodColor = tree.WoodColor;
     }
@@ -33,7 +37,7 @@ public class TrunkGenerator : TreeGenerator
         int nextInner = nextOuter + numSides;
 
         //Randomize splinter height
-        float height = URandom.Range(0.05f, 0.3f) * tree.Scale;
+        float height = URandom.Range(0.05f, 0.3f);
         Vector3 topOffset = height * direction;
 
         //Create top vertices
@@ -66,7 +70,7 @@ public class TrunkGenerator : TreeGenerator
         AssertHelper.NotNegative(outerStartIndex);
 
         //Add the inner ring
-        AddRing(topPos, radius * STUMP_INNER_RING_RADIUS, rotation, barkColor);
+        AddRing(numSides, topPos, radius * STUMP_INNER_RING_RADIUS, rotation, barkColor);
 
         var direction = rotation * Vector3.up;
         int innerStartIndex = vertices.Count - numSides;
@@ -74,7 +78,7 @@ public class TrunkGenerator : TreeGenerator
         for (int i = 0; i < numSides; i++) AddSplinter(outerStartIndex, direction, i);
 
         //Fill the top of the stump
-        AddRing(topPos, radius * STUMP_INNER_RING_RADIUS, rotation, woodColor);
+        AddRing(numSides, topPos, radius * STUMP_INNER_RING_RADIUS, rotation, woodColor);
         int first = vertices.Count - numSides;
         for (int i = first; i < vertices.Count - 2; i++) AddTriangle(i + 2, i + 1, first);
     }
@@ -84,9 +88,8 @@ public class TrunkGenerator : TreeGenerator
     /// Branches are generated last so as not to mess up vertex order.
     /// A generator is only added if a randomly selected face doesn't face down.
     /// </summary>
-    /// <param name="position">The position of the branch</param>
-    /// <param name="baseRotation">The rotation</param>
-    private void AddBranchGenerator()
+    /// <param name="remainingSegments">Remaning number of segments</param>
+    private void AddBranchGenerator(float segmentLength, int remainingSegments)
     {
         int ringStartIndex = vertices.Count - 2 * numSides;
         int faceIndex = Random.Range(0, numSides - 1);
@@ -110,56 +113,73 @@ public class TrunkGenerator : TreeGenerator
             Vector3 center = Vector3.Lerp(l, r, 0.5f);
             float radius = (l - r).magnitude / 2;
 
-            var generator = new BranchGenerator(tree, mesh, this, center, normal, radius);
+            var generator = new BranchGenerator(
+                tree, mesh, this, center, normal, radius, segmentLength, remainingSegments
+            );
             branchGenerators.Add(generator);
         }
     }
 
     public override void GenerateMesh()
     {
-        float radius = baseRadius;
-        var rotation = Quaternion.identity;
-        Vector3 pos = Vector3.zero;
-
         //Bottom of the tree
-        AddRing(pos, baseRadius * BASE_THICKNESS_MULTIPLIER, rotation, barkColor);
+        float bottomRadius = baseRadius * BASE_THICKNESS_MULTIPLIER;
+        AddRing(numSides, Vector3.zero, bottomRadius, Quaternion.identity, barkColor);
         for (int i = 0; i < numSides - 2; i++) AddTriangle(0, i + 1, i + 2);
 
         //Determine whether this tree is a stump
         bool isStump = stumpChance > 0 && URandom.value <= stumpChance;
 
         //Calculate actual height, which is lower than expected in case of a stump
-        int actualHeight = isStump ? URandom.Range(2, expectedHeight / 2) : expectedHeight;
+        int numSegments = isStump ? URandom.Range(2, expectedNumSegments / 2) : expectedNumSegments;
 
-        for (int i = 0; i < actualHeight; i++)
+        float segmentLength = height / expectedNumSegments;
+
+        //Save calculated parameters because conifers need them
+        var positions = new Vector3[numSegments + 1];
+        var rotations = new Quaternion[numSegments];
+        var radiuses = new float[numSegments];
+
+        Vector3 pos = Vector3.zero;
+        for (int i = 0; i < numSegments; i++)
         {
-            radius = Mathf.Lerp(baseRadius, 0, (float)i / expectedHeight);
-
-            // Randomizing the branch angle
+            // Randomizing the angle
             float xRotation = (URandom.value - 0.5f) * twisting;
             float zRotation = (URandom.value - 0.5f) * twisting;
-            rotation = Quaternion.Euler(xRotation, 0f, zRotation);
+            var rotation = Quaternion.Euler(xRotation, 0f, zRotation);
 
             var shift = new Vector3(URandom.value - 0.5f, 0, URandom.value - 0.5f);
-            pos += (rotation * Vector3.up + shift) * tree.Scale;
+            pos += rotation * Vector3.up * segmentLength + shift;
 
-            AddRing(pos, radius, rotation, barkColor);
-            ConnectRings();
+            positions[i] = pos;
+            rotations[i] = rotation;
+            radiuses[i] = Mathf.Lerp(baseRadius, 0, (float)i / expectedNumSegments);
+        }
 
-            //Branches will only attempt to b
-            float trunkPosition = (float)i / expectedHeight;
-            if (trunkPosition >= 0.5 && trunkPosition <= 0.8)
+        for (int i = 0; i < numSegments; i++)
+        {
+            AddRing(numSides, positions[i], radiuses[i], rotations[i], barkColor);
+            ConnectRings(numSides);
+
+            //Attempt to sprout a branch
+            if (foliageType == FoliageStyle.Round || foliageType == FoliageStyle.None)
             {
-                if (URandom.value < 0.5f) AddBranchGenerator();
+                float trunkPosition = (float)i / expectedNumSegments;
+                if (trunkPosition >= 0.33 && trunkPosition <= 0.9)
+                {
+                    if (URandom.value < 0.5f) AddBranchGenerator(segmentLength, numSegments - i);
+                }
             }
         }
 
-        if (isStump) AddStumpTop(pos, radius, rotation);
+        if (isStump) AddStumpTop(pos, radiuses[numSegments - 1], rotations[numSegments - 1]);
         else
         {
-            var capPos = pos + rotation * Vector3.up;
-            AddBranchCap(capPos, barkColor);
-            AddFoliage(rotation, capPos);
+            var rotation = rotations[numSegments - 1];
+            var capPos = positions[numSegments - 1] + rotation * Vector3.up * segmentLength;
+            positions[numSegments] = capPos;
+            AddCap(numSides, capPos, barkColor);
+            AddFoliage(1, capPos, positions, rotations, radiuses);
         }
 
         foreach (var g in branchGenerators) g.GenerateMesh();

@@ -1,46 +1,41 @@
-﻿using UnityEngine;
+﻿#define ENABLE_PROFILER
+
+using UnityEngine;
+using UnityEngine.Profiling;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ProceduralTree : MonoBehaviour
 {
-    public const float MIN_FOLIAGE_SIZE = 1f;
-    public const float MAX_FOLIAGE_SIZE = 10f;
+    public const int MIN_ROUNDNESS = 4, MAX_ROUNDNESS = 8;
+    public const int MIN_SEGMENTS = 3, MAX_SEGMENTS = 8;
+    public const float MIN_THICKNESS = 0.25f, MAX_THICKNESS = 4f;
+    public const float MIN_HEIGHT = 5f, MAX_HEIGHT = 25f;
+    public const float MIN_FOLIAGE_SIZE = 1f, MAX_FOLIAGE_SIZE = 10f;
     public const float MAX_FOLIAGE_VARIANCE = 5f;
+
+    private const int GIZMO_LINES_PER_SIDE = 3;
 
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-    private MeshGenerator generator;
-
-    [Range(0.1f, 10)]
-    public float Scale;
-
-    public float Units(float n)
-    {
-        return n * Scale;
-    }
+    private TrunkGenerator generator;
 
     [Header("Trunk Options")]
     /// <summary>
     /// The material assigned to the trunk.
     /// </summary>
-    public Material TrunkMaterial;
+    public Material[] TrunkMaterials;
+
 
     /// <summary>
-    /// The amount of segments of the tree.
+    /// The height of the tree.
     /// </summary>
-    [Range(5, 25)]
-    public int Height = 10;
-
-    /// <summary>
-    /// The amount of sides of the tree.
-    /// </summary>
-    [Range(4, 12)]
-    public int Roundness = 8;
+    [Range(MIN_HEIGHT, MAX_HEIGHT)]
+    public float Height = 10f;
 
     /// <summary>
     /// Radius at the base of the tree.
     /// </summary>
-    [Range(0.25f, 4f)]
+    [Range(MIN_THICKNESS, MAX_THICKNESS)]
     public float Thickness = 1f;
 
     /// <summary>
@@ -66,9 +61,9 @@ public class ProceduralTree : MonoBehaviour
     public Color WoodColor = Palette.WOOD_BROWN;
 
     [Header("Foliage Options")]
-    public Material FoliageMaterial;
+    public Material[] FoliageMaterials;
 
-    public ProceduralFoliageStyle FoliageStyle = ProceduralFoliageStyle.Round;
+    public FoliageStyle FoliageStyle = FoliageStyle.Round;
 
     [HideInInspector]
     public Color[] FoliageColors = new Color[] { Palette.GREEN };
@@ -85,17 +80,59 @@ public class ProceduralTree : MonoBehaviour
     [HideInInspector, Range(0, MAX_FOLIAGE_VARIANCE)]
     public float FoliageWidthVariance = 3f;
 
+    public int NumSides
+    {
+        get
+        {
+            float t = Mathf.InverseLerp(MIN_THICKNESS, MAX_THICKNESS, Thickness);
+            return (int)Mathf.Floor(Mathf.Lerp(MIN_ROUNDNESS, MAX_ROUNDNESS, t));
+        }
+    }
+
+    public int NumSegments
+    {
+        get
+        {
+            float t = Mathf.InverseLerp(MIN_HEIGHT, MAX_HEIGHT, Height);
+            return (int)Mathf.Floor(Mathf.Lerp(MIN_SEGMENTS, MAX_SEGMENTS, t));
+        }
+    }
+
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material = TrunkMaterial;
+        meshRenderer.materials = TrunkMaterials;
 
         generator = new TrunkGenerator(this, meshFilter.mesh);
     }
 
     void Start()
     {
+        Profiler.BeginSample("Tree Generation", gameObject);
         generator.GenerateMesh();
+        Profiler.EndSample();
+
+        var meshCollider = GetComponent<MeshCollider>();
+        if (meshCollider != null) meshCollider.sharedMesh = meshFilter.mesh;
+    }
+
+    void OnDrawGizmos()
+    {
+        if (meshFilter != null) return;
+
+        Gizmos.color = BarkColor;
+
+        Vector3 top = transform.position + Height * Vector3.up;
+        int numLines = NumSides * GIZMO_LINES_PER_SIDE;
+        float angle = 2 * Mathf.PI / numLines;
+
+        for (int i = 0; i < numLines; i++)
+        {
+            float x = (float)Mathf.Cos(angle * i);
+            float z = (float)Mathf.Sin(angle * i);
+            var offset = Thickness * new Vector3(x, 0, z);
+            Gizmos.DrawLine(transform.position + offset, top);
+        }
     }
 }

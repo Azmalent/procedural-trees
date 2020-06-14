@@ -42,7 +42,7 @@ public class ProceduralTreeEditor : Editor
     {
         serializedObject.Update();
 
-        if (tree.FoliageStyle == ProceduralFoliageStyle.None) return;
+        if (tree.FoliageStyle == FoliageStyle.None) return;
 
         DrawFoliageColorList();
         //TODO: better editor
